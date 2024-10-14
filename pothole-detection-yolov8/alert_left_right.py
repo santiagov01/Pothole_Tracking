@@ -8,6 +8,15 @@ model = YOLO("project_files/2ndbest.pt")
 video_path = "test2.mp4"
 cap = cv2.VideoCapture(video_path)
 
+
+# Get the frame width and height
+frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+# Define the codec and create a VideoWriter object to save the output video
+output_path = "output_with_annotations_simple.mp4"
+fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Codec for MP4
+out = cv2.VideoWriter(output_path, fourcc, 30, (frame_width, frame_height))
+
 # Loop through the video frames
 while cap.isOpened():
     # Read a frame from the video
@@ -24,7 +33,7 @@ while cap.isOpened():
          # Annotate the frame with the detection results
         #annotated_frame = results[0].plot()  # This returns the frame with annotations (boxes, labels, etc.)
         
-        annotated_frame = frame
+        annotated_frame = frame 
         # Initialize variables to track if there are objects on the left or right
         object_on_left = False
         object_on_right = False
@@ -67,7 +76,10 @@ while cap.isOpened():
                           (frame_width - 50, 50 + alert_height), (0, 255, 0), -1)  # Green box
             cv2.putText(annotated_frame, "RIGHT", (frame_width - 110, 50 ),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 255, 255), 2)
-         # Visualize the results on the frame
+        
+
+        # Write the frame with annotations to the output video
+        out.write(annotated_frame)
 
         # Display the frame
         cv2.imshow("YOLOv8 Tracking", annotated_frame)
@@ -81,4 +93,5 @@ while cap.isOpened():
 
 # Release the video capture object and close the display window
 cap.release()
+out.release() # Release the VideoWriter object
 cv2.destroyAllWindows()
